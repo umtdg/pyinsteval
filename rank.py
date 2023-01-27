@@ -22,6 +22,8 @@ CWD = pathlib.Path(os.path.dirname(os.path.relpath(__file__)))
 INSTRUCTOR_DIR = CWD.joinpath(".instructors")
 TEMP_DIR = pathlib.Path("/tmp")
 
+FMT_INSTRUCTOR_URL="https://stars.bilkent.edu.tr/evalreport/index.php?mode=ins&insId={}"
+
 
 # Functions
 def log(msg: str, level: str, color: str, style: str = "bold"):
@@ -131,8 +133,8 @@ def load_instructors_from_list(filename: str) -> List[Instructor]:
     instructors: List[Instructor] = []
     with open(filename, "r") as f:
         for line in f:
-            name, url = tuple(line.strip().split(";"))
-            instructors.append(Instructor(name, url))
+            name, insId = tuple(line.strip().split(";"))
+            instructors.append(Instructor(name, FMT_INSTRUCTOR_URL.format(insId)))
 
     return instructors
 
@@ -157,7 +159,7 @@ def load_instructors_from_existing() -> Dict[Instructor, pandas.DataFrame]:
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("-f", "--file", dest="instructor_list", required=False, default=None,
-                        help="File containing InstructorName;EvaluationUrl pair")
+                        help="File containing InstructorName;InstructorId pair")
     parser.add_argument("-c", "--course", dest="course", required=True,
                         help="Course to grep from instructor evaluations")
     parser.add_argument("-o", "--override", dest="override", required=False, default=False, action="store_true",
